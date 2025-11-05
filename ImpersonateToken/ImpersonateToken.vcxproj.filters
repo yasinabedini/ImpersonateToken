@@ -23,8 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\x64\Release\ImpersonateToken.exe">
-      <Filter>release</Filter>
-    </None>
+    <None Include="..\x64\Release\ImpersonateToken.exe" />
   </ItemGroup>
 </Project>
