@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <tlhelp32.h>
 #include <iostream>
 #include <string>
@@ -87,7 +87,7 @@ bool StartTrustedInstallerService()
 
 bool GetTrustedInstallerToken(HANDLE* phToken)
 {
-    // ??? 1: ??????? ?? PROCESS_QUERY_LIMITED_INFORMATION
+    // روش 1: استفاده از PROCESS_QUERY_LIMITED_INFORMATION
     DWORD pid = GetProcessIdByName(L"TrustedInstaller.exe");
     if (!pid)
     {
@@ -97,7 +97,7 @@ bool GetTrustedInstallerToken(HANDLE* phToken)
 
     std::wcout << L"[+] Found TrustedInstaller PID: " << pid << L"\n";
 
-    // ??? ?? PROCESS_QUERY_LIMITED_INFORMATION
+    // سعی با PROCESS_QUERY_LIMITED_INFORMATION
     HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
     if (!hProc)
     {
@@ -108,14 +108,14 @@ bool GetTrustedInstallerToken(HANDLE* phToken)
     std::wcout << L"[+] Opened process handle\n";
 
     HANDLE hToken;
-    // ??????? ?? TOKEN_QUERY ???? TOKEN_DUPLICATE
+    // استفاده از TOKEN_QUERY بجای TOKEN_DUPLICATE
     if (!OpenProcessToken(hProc, TOKEN_DUPLICATE | TOKEN_QUERY, &hToken))
     {
         DWORD error = GetLastError();
         CloseHandle(hProc);
         std::wcerr << L"[-] OpenProcessToken failed: " << error << L"\n";
 
-        // ??? ???????: ??????? ?? winlogon.exe
+        // روش جایگزین: استفاده از winlogon.exe
         std::wcout << L"[*] Trying alternative method via winlogon.exe...\n";
         CloseHandle(hProc);
 
@@ -216,8 +216,10 @@ bool CreateProcessAsTrustedInstaller(const std::wstring& commandLine)
 int main()
 {
     std::wcout << L"=== TrustedInstaller Process Creator ===\n\n";
+    std::wcout << L"=== Author YaSiN AbEdInI ===\n\n";
+    std::wcout << L"=== https://github.com/yasinabedini/ImpersonateToken ===\n\n";
 
-    // ????? Administrator
+    // بررسی Administrator
     BOOL isAdmin = FALSE;
     SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
     PSID AdministratorsGroup;
@@ -238,7 +240,7 @@ int main()
 
     std::wcout << L"[+] Running with Administrator privileges\n\n";
 
-    // ????? cmd ?? ?????? TrustedInstaller
+    // ایجاد cmd با دسترسی TrustedInstaller
     if (CreateProcessAsTrustedInstaller(L"cmd.exe /k whoami /groups & echo. & echo TrustedInstaller privileges active!"))
     {
         std::wcout << L"\n[+] Success! A new cmd window opened with TrustedInstaller privileges.\n";
